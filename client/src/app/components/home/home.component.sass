@@ -1,0 +1,72 @@
+main
+  max-width: 1280px
+  margin: 0 auto
+  h1
+    //color: #427919
+    margin-top: 40px
+    color: #5a9b67
+    font-family: 'Trade Winds', cursive
+    font-size: 44px
+  .pizza-orders
+    text-align: justify
+    margin-top: 50px
+    article
+      width: 300px
+      height: 380px
+      overflow: hidden
+      background-color: rgba(90, 155, 103, 0.15)
+      display: inline-block
+      margin: 0 10px 20px 10px
+      position: relative
+      .price
+        padding: 5px
+        position: absolute
+        top: 0px
+        right: 0px
+        font-family: 'Trade Winds', cursive
+        font-size: 28px
+        color: #e95420
+      .order-number
+        padding: 0px 15px 15px 15px
+        position: absolute
+        top: 0px
+        left: 0px
+        font-family: 'Trade Winds', cursive
+        color: #5a9b67
+        font-size: 36px
+      .img-wrapper
+        min-width: 280px
+        margin: 0px 10px 10px 10px
+        img
+          transform: rotateX(-47deg) rotateY(-17deg)
+          max-width: 280px
+      .description
+        height: 85px
+        width: 100%
+        border-top: 3px solid #ffffff
+        position: absolute
+        bottom: 0px
+        left: 0px
+        padding: 10px
+        .name-and-author, .date-and-price
+          display: flex
+          justify-content: space-between
+          align-items: center
+          p
+            width: 50%
+            text-overflow: ellipsis
+            overflow: hidden
+            white-space: nowrap
+        .controls-wrapper
+          display: flex
+          justify-content: space-between
+          align-items: center
+          .btn:not(.btn-danger)
+            margin-left: 6px
+          .left, .right
+            display: flex
+            align-items: center
+          .left
+            justify-content: flext-start
+          .right
+            justify-content: flext-end

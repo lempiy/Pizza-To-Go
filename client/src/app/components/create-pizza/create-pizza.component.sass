@@ -1,0 +1,67 @@
+.create-wrapper
+  margin-top: 40px
+  display: flex
+  .errors
+    small
+      color: #fe1200
+  .ingredient
+    position: relative
+    width: 150px
+    height: 50px
+    margin: 10px 10px 10px 0
+    label
+      position: absolute
+      top: 0px
+      left: 0px
+      z-index: 1
+      padding: 5px 10px
+      border: 2px solid #bbb
+      border-radius: 3px
+      display: flex
+      align-items: center
+      width: 150px
+      height: 50px
+      cursor: pointer
+      &:hover
+        border: 2px solid #0c3
+    input
+      position: absolute
+      top: 0px
+      left: 0px
+      margin: 0
+      display: none
+    input:checked + label
+      border: 2px solid #0c3
+      background-color: rgba(0, 210, 100, 0.1)
+    .actual
+      img
+        width: 30px
+        height: auto
+        margin-right: 10px
+  .price-block
+    display: flex
+    justify-content: space-between
+    align-items: center
+    font-family: "Ubuntu",Tahoma,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-weight: 500
+    .price-text
+      font-size: 20px
+    .price-value
+      font-size: 26px
+  .submit-block
+    margin-top: 20px
+    .control-pizza
+      width: 120px
+    [type=submit]
+      margin-left: 10px
+  .block
+    display: block
+  .canvas-section
+    min-width: 500px
+  .form-section
+    width: calc(100% - 500px)
+    .select-category
+      //max-width: 320px
+  .canvas-section, .form-section
+    //border: 1px solid #23fa0d
+    min-height: 767px

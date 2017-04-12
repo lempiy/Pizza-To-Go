@@ -1,0 +1,48 @@
+<div class="auth-modal" [class.hidden]="!showSignup && !showLogin">
+  <div class="title text-center">
+    PIZZA to GO!
+  </div>
+  <div class="wrapper-280">
+
+    <form class="signup-from" [class.hidden]="!showSignup" (ngSubmit)="signup()" #signupForm="ngForm">
+      <h2 class="text-center">Signup</h2>
+      <p class="text-center text-danger" [class.hidden]="!authService.errorMessage">{$ authService.errorMessage $}</p>
+      <div class="form-group">
+        <label for="exampleInputEmail1">Username</label>
+        <input type="text" class="form-control" id="userInputSignup" (keyup)="onKeyUp($event)" placeholder="Username" [(ngModel)]="user.username" minlength="2" maxlength="18" name="username" required>
+      </div>
+      <div class="form-group">
+        <label for="exampleInputEmail1">Email address</label>
+        <input type="email" class="form-control" id="emailInputSignup" name="email" placeholder="Email" [formControl]="emailCtrl" [(ngModel)]="user.email" required>
+      </div>
+      <div class="form-group">
+        <label for="exampleInputPassword1">Password</label>
+        <input type="password" class="form-control" id="passwordInputSignup" placeholder="Password" [(ngModel)]="user.password" minlength="4" name="password" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-md btn-block" [disabled]="!signupForm.valid || (emailCtrl.dirty &&	emailCtrl.hasError('notAllowed'))">Signup</button>
+      <button type="button" class="btn btn-default btn-md btn-block" [routerLink] [queryParams]="{}">Cancel</button>
+      <div class="or-suggest text-center">
+        <span>If you already have an account: <a [routerLink] [queryParams]="{auth: 'login'}">Login</a></span>
+      </div>
+    </form>
+
+    <form class="login-from" [class.hidden]="!showLogin" (ngSubmit)="login()" #loginForm="ngForm">
+      <h2 class="text-center">Login</h2>
+      <div class="form-group login">
+        <label for="exampleInputEmail1">Username</label>
+        <input type="text" class="form-control" id="usernameInputLogin" placeholder="Username" [(ngModel)]="user.username" minlength="2" maxlength="18" name="username" required>
+      </div>
+      <div class="form-group">
+        <label for="exampleInputPassword1">Password</label>
+        <input type="password" class="form-control" id="passwordInputLogin" placeholder="Password" [(ngModel)]="user.password" name="password" minlength="4" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-md btn-block login" [disabled]="!loginForm.valid">Login</button>
+      <button type="button" class="btn btn-default btn-md btn-block" [routerLink] [queryParams]="{}">Cancel</button>
+      <div class="or-suggest text-center">
+        <span>If you have not account yet: <a [routerLink] [queryParams]="{auth: 'signup'}">Signup</a></span>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="shadow" [routerLink] [queryParams]="{}" [class.hidden]="!showSignup && !showLogin">
+</div>

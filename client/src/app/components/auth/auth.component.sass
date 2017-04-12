@@ -1,0 +1,62 @@
+.auth-modal
+  display: block
+  position: fixed
+  top: 50%
+  left: 50%
+  transform: translate(-50%, -50%)
+  z-index: 2
+  width: 320px
+  height: auto
+  background-color: #ffffff
+  border-radius: 10px
+  animation: fadeIn 0.5s
+  @media (max-width: 767px)
+    border-radius: 0px
+    width: 100vw
+    height: 100vh
+  //border: 1px solid #999
+  input.ng-dirty.ng-invalid
+    border-color: #b94a48
+    &:focus
+      box-shadow: 0 0 8px #b94a48
+  .wrapper-280
+    .login
+      margin-top: 20px
+    max-width: 280px
+    margin: 0 auto
+    .btn-primary
+      margin-top: 10px
+      &.login
+        margin-top: 40px
+    .or-suggest
+      margin-top: 20px
+      margin-bottom: 40px
+  .title
+    height: 75px
+    background-color: rgba(255,175,75,1)
+    filter-gradient: #ffaf4b, #ff920a, #ffaf4b, horizontal
+    background-image: linear-gradient(to left, #e66d45 0%, #e95420, #e95420, #e66d45 100%)
+    border-top-left-radius: 10px
+    border-top-right-radius: 10px
+    border-bottom: 1px solid #999
+    line-height: 75px
+    font-size: 30px
+    font-family: 'Trade Winds', cursive
+    color: #fff
+    @media (max-width: 767px)
+      border-radius: 0px
+.shadow
+  position: fixed
+  top: 0
+  left: 0
+  z-index: 1
+  width: 100vw
+  height: 100vh
+  background-color: #000000
+  opacity: 0.5
+
+  @keyframes fadeIn
+    0%
+      opacity: 0
+    100%
+      opacity: 1

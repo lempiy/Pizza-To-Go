@@ -1,0 +1,54 @@
+<main>
+  <h1 class="text-center">PIZZA TO GO!</h1>
+  <section class="pizza-orders text-center">
+    <article *ngFor="let pizza of pizzaData.pizzas; let i = index;">
+      <div class="price">${$ pizza.price.toFixed(2) $}</div>
+      <div class="order-number">{$ i + 1 $}</div>
+      <div class="img-wrapper">
+        <img src="{$ pizza.img_url $}" alt="{$ pizza.name $}">
+      </div>
+      <div class="description">
+        <div class="name-and-author">
+          <p class="name">
+            {$ pizza.name $}
+          </p>
+          <p class="author text-right">
+            By: <b>{$ pizza.author.name $}</b>
+          </p>
+        </div>
+        <div class="controls-wrapper">
+          <div class="left">
+            <button
+              type="button"
+              class="btn btn-sm btn-danger"
+              [disabled]="pizzaData.pendingRequest"
+              *ngIf="isMyPizza(pizza.author.id)"
+              (click)="deletePizza(pizza.id, i)">
+                Cancel
+              </button>
+              <a
+              [routerLink]="['/edit/', pizza.id]"
+              type="button"
+              class="btn btn-sm btn-info"
+              *ngIf="isMyPizza(pizza.author.id)">
+                Edit
+              </a>
+          </div>
+          <div class="right">
+            <button
+              type="button"
+              class="btn btn-sm btn-success"
+              [disabled]="pizzaData.pendingRequest"
+              *ngIf="isMyPizza(pizza.author.id)"
+              (click)="acceptPizza(pizza.id, i)">
+                Accept
+              </button>
+            <button type="button" class="btn btn-sm btn-warning" (click)="selectDetails(pizza)">Info</button>
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
+</main>
+<pizza-pizza-details [class.hidden]="!showDetails" [pizza]="selectedPizza" (onClose)="onClose($event)"></pizza-pizza-details>
+

@@ -1,0 +1,41 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# compiled output
+# /dist
+/client/tmp
+
+# dependencies
+/client/node_modules
+/client/bower_components
+
+# upload
+/upload/*.png
+
+# IDEs and editors
+/.idea
+/.vscode
+.project
+.classpath
+*.launch
+.settings/
+
+# misc
+/dist
+/client/.editorconfig
+/client/.sass-cache
+/client/connect.lock
+/client/coverage/*
+/client/libpeerconnection.log
+/clientnpm-debug.log
+keys.json
+/clienttestem.log
+/client/typings
+/vendor
+
+# e2e
+/client/e2e/
+
+
+#System Files
+/client/.DS_Store
+/client/Thumbs.db

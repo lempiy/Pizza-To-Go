@@ -1,0 +1,87 @@
+<main class="container">
+  <h1 class="text-center">Edit pizza #{$ pizzaData.currentPizza.id $}</h1>
+  <div class="create-wrapper">
+    <section class="canvas-section render-container text-center">
+      <!-- canvas goes here -->
+    </section>
+    <section class="form-section">
+      <form #editForm="ngForm" *ngIf="pizzaCanvas.pizza">
+        <div class="form-group">
+          <label for="pizzaName">Pizza and order name</label>
+          <input type="text" class="form-control" id="pizzaName" placeholder="Pizza and order name"
+          name="name" [(ngModel)]="pizzaCanvas.pizza.name" minlength="3" required>
+        </div>
+        <div class="form-group">
+          <label for="pizzSiza" class="block">Pizza size</label>
+          <label class="radio-inline">
+            <input type="radio" name="size" id="size" value="30" [checked]="pizzaCanvas.pizza.size === 30"
+            [value]="30"
+            (change)="onSizeChange(30)"> 30"
+          </label>
+          <label class="radio-inline">
+            <input type="radio" name="size" id="size" value="45" [checked]="pizzaCanvas.pizza.size === 45"
+            [value]="45"
+            (change)="onSizeChange(45)"> 45"
+          </label>
+          <label class="radio-inline">
+            <input type="radio" name="size" id="size" value="60" [checked]="pizzaCanvas.pizza.size === 60"
+            [value]="60"
+            (change)="onSizeChange(60)"> 60"
+          </label>
+        </div>
+        <div class="form-group">
+          <label for="textArea" class="block">Description</label>
+          <textarea class="form-control" placeholder="Some info about your pizza..." rows="3" id="textArea" name="description" [(ngModel)]="pizzaCanvas.pizza.description"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="select" class="block">Category</label>
+          <select class="form-control" id="select" name="category" [(ngModel)]="pizzaCanvas.pizza.category">
+            <option *ngFor="let key of categories_keys" [ngValue]="pizzaCanvas.categories[key]">{$ pizzaCanvas.categories[key].name $}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="checkbox-inline ingredient" *ngFor="let key of ingredients_keys">
+            <input type="checkbox" class="blury"
+              [id]="pizzaCanvas.ingredients[key].name"
+              (change)="onChangeIngredient(pizzaCanvas.ingredients[key].name, pizzaCanvas.ingredients[key].checked)"
+              [name]="pizzaCanvas.ingredients[key].name"
+              [(ngModel)]="pizzaCanvas.ingredients[key].checked"
+              [disabled]="!pizzaCanvas.ready">
+            <label [for]="pizzaCanvas.ingredients[key].name" class="actual">
+              <img [src]="pizzaCanvas.ingredients[key].img_url" [alt]="pizzaCanvas.ingredients[key].name">
+              <span>{$ pizzaCanvas.ingredients[key].name $}</span>
+            </label>
+          </label>
+        </div>
+        <div class="price-block">
+          <p class="price-text">Total price:</p>
+          <p class="price-value">$ {$ pizzaCanvas.pizza.price.toFixed(2) $}</p>
+        </div>
+        <div class="errors text-right" [class.hidden]="!editForm?.touched || editForm?.valid">
+          <small [class.hidden]="!editForm.controls['pizzaName']?.hasError('required')">
+            Pizza name is required<br>
+          </small>
+          <small [class.hidden]="!editForm.controls['pizzaName']?.hasError('minlength')">
+            Pizza name should contain at least 3 characters<br>
+          </small>
+          <small [class.hidden]="!editForm.controls['checkboxes']?.hasError('required')">
+            You cannot create pizza without ingredients<br>
+          </small>
+          <small [class.hidden]="!editForm.controls['checkboxes']?.hasError('minlength')">
+            You should chose at least 3 ingredients<br>
+          </small>
+        </div>
+        <div class="form-group text-right submit-block">
+          <button type="button" [routerLink]="['/']" class="btn btn-default control-pizza">Cancel</button>
+          <button
+            type="submit"
+            class="btn btn-primary control-pizza"
+            (click)="updatePizza()"
+            [disabled]="pizzaData.pendingRequest || !editForm.valid">
+              Update
+            </button>
+        </div>
+      </form>
+    </section>
+  </div>
+</main>

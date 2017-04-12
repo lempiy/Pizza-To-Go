@@ -1,0 +1,37 @@
+.details-block
+  position: fixed
+  top: 50%
+  left: 50%
+  transform: translate(-50%, -50%)
+  padding: 20px 10px
+  z-index: 2
+  background-color: #fff
+  border-radius: 3px
+  overflow-y: scroll
+  img[alt="pizza"]
+    margin: 10px 0
+    @media (max-width: 767px)
+      width: 300px
+      height: auto
+  table
+    margin-top: 10px
+    width: 100%
+    td:first-child
+      font-weight: bold
+    td:last-child
+      text-align: right
+    .ingr-row
+      margin-top: 10px
+
+.mask
+  position: fixed
+  margin: 0
+  padding: 0
+  overflow: hidden
+  top: 0px
+  left: 0px
+  background-color: #000
+  opacity: 0.3
+  z-index: 0
+  width: 100vw
+  height: 100%
