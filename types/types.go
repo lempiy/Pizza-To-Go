@@ -1,8 +1,6 @@
 package types
 
 import (
-	"net/textproto"
-
 	"github.com/dgrijalva/jwt-go"
 )
 
@@ -95,25 +93,9 @@ type CategoryDB struct {
 	IsDefault   int
 }
 
-// Context type for responses
-type Context struct {
-	Navigation string
-	Search     string
-	Message    string
-	CSRFToken  string
-	Referer    string
-}
-
 //Status will be returned as response on signup/login
 type Status struct {
 	StatusCode int    `json:"status_code"`
 	Message    string `json:"message"`
 	Token      string `json:"token, omitempty"`
-}
-
-//ImgHeader type
-type ImgHeader struct {
-	Filename string
-	Header   textproto.MIMEHeader
-	// contains filtered or unexported fields
 }
