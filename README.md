@@ -20,3 +20,5 @@ This is pizza to go - tiny trainging application by Anton. It allows user to cre
 
 
 #### Created for Kottans Web Course
+
+#### Link to deployed [app](https://pizza-to-go.herokuapp.com/)
