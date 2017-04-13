@@ -16,10 +16,13 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	cldry "github.com/b4t3ou/cloudinary-go"
 )
 
 //Keys JSON struct stores secret keys and DB init vars
 var Keys keys
+var cloudinary *cldry.Cloudinary
 
 type keys struct {
 	SessionsKey string `json:"sessions_key"`
@@ -29,12 +32,24 @@ type keys struct {
 	NameDB      string `json:"name_db"`
 }
 
+// CloudinaryURL is a url of image remote storage for Heroku
+var CloudinaryURL string
+
 func init() {
+	CloudinaryURL = os.Getenv("CLOUDINARY_URL")
+
 	file, err := ioutil.ReadFile("./keys.json")
 	if err != nil {
 		log.Printf("File error: %v\n", err)
 		panic(err)
 	}
+	log.Println(CloudinaryURL)
+	if CloudinaryURL != "" {
+		rgxp := regexp.MustCompile(`^[a-z]+(?::\/\/)(?P<Public>\d*):(?P<Secret>\w*)@(?P<Name>\w*$)`)
+		slices := rgxp.FindAllStringSubmatch(CloudinaryURL, -1)
+		cloudinary = cldry.Create(slices[0][1], slices[0][2], slices[0][3])
+	}
+
 	json.Unmarshal(file, &Keys)
 }
 
@@ -46,8 +61,21 @@ func Itob(n int) bool {
 	return false
 }
 
-//SaveEncodedImage saves base64 encoded image to file
+// SaveEncodedImage saves base64 encoded image to file or Cloudinary
 func SaveEncodedImage(imageCode string) (string, error) {
+	// If host is Heroku use Cloudinary
+	if CloudinaryURL != "" {
+		option := cldry.Option{}
+
+		uploaded, err := cloudinary.Upload(imageCode, option)
+
+		if err != nil {
+			log.Println(err)
+			return "", err
+		}
+		return uploaded.SecureUrl, err
+	}
+	// Else upload on server
 	randomFileName := md5.New()
 	var fullFileName string
 	io.WriteString(randomFileName, strconv.FormatInt(time.Now().Unix(), 10))
@@ -81,7 +109,10 @@ func SaveEncodedImage(imageCode string) (string, error) {
 
 //RemoveUnusedImg deletes useless file from drive
 func RemoveUnusedImg(imageURL string) error {
-	err := os.Remove("./" + imageURL)
+	var err error
+	if !strings.HasPrefix(imageURL, "https://") {
+		err = os.Remove("./" + imageURL)
+	}
 	return err
 }
 

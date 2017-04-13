@@ -9,6 +9,8 @@ import (
 
 	"strconv"
 
+	"strings"
+
 	"github.com/lempiy/pizza-app-pq/models"
 	"github.com/lempiy/pizza-app-pq/sessions"
 	"github.com/lempiy/pizza-app-pq/types"
@@ -122,14 +124,17 @@ func PostPizza(w http.ResponseWriter, r *http.Request) {
 		AnswerServerError(w)
 		panic(err)
 	}
-
+	ImgURL := imgName
+	if !strings.HasPrefix(imgName, "https://") {
+		ImgURL = "upload/" + imgName
+	}
 	pizzaPost := types.PizzaPost{
 		Name:           pizzaReq.Name,
 		AuthorID:       sessions.GetCurrentUserID(r),
 		CategoryID:     pizzaReq.CategoryID,
 		Size:           pizzaReq.Size,
 		Description:    pizzaReq.Description,
-		ImgURL:         "upload/" + imgName,
+		ImgURL:         ImgURL,
 		IngredientsIDs: pizzaReq.IngredientsIDs}
 
 	if isOk, errMessage := validators.ValidatePizza(&pizzaPost); !isOk {
@@ -322,14 +327,17 @@ func UpdatePizza(w http.ResponseWriter, r *http.Request) {
 		AnswerServerError(w)
 		panic(err)
 	}
-
+	ImgURL := imgName
+	if !strings.HasPrefix(imgName, "https://") {
+		ImgURL = "upload/" + imgName
+	}
 	pizzaPost := types.PizzaPost{
 		Name:           pizzaReq.Name,
 		AuthorID:       sessions.GetCurrentUserID(r),
 		CategoryID:     pizzaReq.CategoryID,
 		Size:           pizzaReq.Size,
 		Description:    pizzaReq.Description,
-		ImgURL:         "upload/" + imgName,
+		ImgURL:         ImgURL,
 		IngredientsIDs: pizzaReq.IngredientsIDs}
 
 	if isOk, errMessage := validators.ValidatePizza(&pizzaPost); !isOk {
