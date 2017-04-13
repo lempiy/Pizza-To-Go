@@ -1,7 +1,7 @@
 ## :pizza: PIZZA TO GO :pizza:
 
 
-This is pizza to go - tiny trainging application by Anton. It allows user to create and order his personal kind of pizza. The main goal of this project is to traing some dev in backned and Angular 2.
+This is pizza to go - tiny trainging application by Anton. It allows user to create and order his personal kind of pizza. The main goal of this project is to train some dev in backned and Angular 2.
 
 
 ![pizza slice](https://s-media-cache-ak0.pinimg.com/236x/8b/00/f0/8b00f0595977e46d8016b76cbe0de89a.jpg)
