@@ -11,7 +11,7 @@ import (
 
 // ValidateEmail validates user email upon signup
 func ValidateEmail(email string) bool {
-	validEmail := regexp.MustCompile(`^\w+@\w+\.\w{2,4}$`)
+	validEmail := regexp.MustCompile(`^[\w.]+@\w+\.\w{2,4}$`)
 	return validEmail.MatchString(email)
 }
 
