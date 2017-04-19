@@ -47,7 +47,7 @@ export class AuthComponent implements OnInit {
   }
 
   static	emailValidator(control:	FormControl)	{
-    return	/^\w+@\w+\.\w{2,4}$/g.test(control.value)	?	null:	{	notAllowed:	true	};
+    return	/^[\w.]+@\w+\.\w{2,4}$/g.test(control.value)	?	null:	{	notAllowed:	true	};
   }
 
   emailCtrl:	FormControl	=	new	FormControl('',	AuthComponent.emailValidator);
