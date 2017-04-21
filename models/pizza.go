@@ -111,6 +111,17 @@ func PostPizza(pizza types.PizzaPost, price float64) error {
 	return err
 }
 
+//PostPizzaParallel creates pizza order async
+func PostPizzaParallel(pizza types.PizzaPost, price float64, done chan bool) {
+	err := PostPizza(pizza, price)
+	if err != nil {
+		done <- false
+		log.Println(err)
+	} else {
+		done <- true
+	}
+}
+
 //PostUsedIngredients - places all ingr used in particular pizza
 func PostUsedIngredients(pizzaID int, ingrIDs []int) error {
 	sqlQuery := `INSERT INTO used_ingredient(ingredient_id, pizza_id) VALUES`
@@ -187,6 +198,18 @@ func UpdatePizza(pizza types.PizzaPost, price float64, id int, userID int) error
 
 	err = PostUsedIngredients(id, pizza.IngredientsIDs)
 	return err
+}
+
+//UpdatePizzaParallel upadtes pizza order async
+func UpdatePizzaParallel(pizza types.PizzaPost, price float64,
+	id int, userID int, done chan bool) {
+	err := UpdatePizza(pizza, price, id, userID)
+	if err != nil {
+		done <- false
+		log.Println(err)
+	} else {
+		done <- true
+	}
 }
 
 //AcceptPizza sets deleted flag to pizza

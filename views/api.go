@@ -9,8 +9,6 @@ import (
 
 	"strconv"
 
-	"strings"
-
 	"github.com/lempiy/pizza-app-pq/models"
 	"github.com/lempiy/pizza-app-pq/sessions"
 	"github.com/lempiy/pizza-app-pq/types"
@@ -106,7 +104,12 @@ type PostAnswer struct {
 	Success bool `json:"success"`
 }
 
-// PostPizza main handler to push new pizza orders
+type savingTask struct {
+	ImageCode string
+	ImageName string
+}
+
+// PostPizza main handler to push new pizza orders using goroutines
 func PostPizza(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		AnswerBadRequest(w, "Wrong request method only POST allowed.")
@@ -114,20 +117,18 @@ func PostPizza(w http.ResponseWriter, r *http.Request) {
 	}
 	var pizzaAnswer PostAnswer
 	var pizzaReq PizzaRequest
+	var ImgURL string
 
 	err := json.NewDecoder(r.Body).Decode(&pizzaReq)
-	log.Println("Save image")
-	imgName, err := utils.SaveEncodedImage(pizzaReq.EncodedImage)
-	log.Println("Saved image " + imgName)
-	if err != nil {
-		log.Println("Saved image error " + imgName)
-		AnswerServerError(w)
-		panic(err)
+
+	imageName := utils.GetUniqueName()
+	if utils.StorageName == "" {
+		ImgURL = "upload/" + imageName + ".png"
+	} else {
+		ImgURL = fmt.Sprintf(
+			"https://res.cloudinary.com/%s/image/upload/%s.png", utils.StorageName, imageName)
 	}
-	ImgURL := imgName
-	if !strings.HasPrefix(imgName, "https://") {
-		ImgURL = "upload/" + imgName
-	}
+
 	pizzaPost := types.PizzaPost{
 		Name:           pizzaReq.Name,
 		AuthorID:       sessions.GetCurrentUserID(r),
@@ -151,7 +152,21 @@ func PostPizza(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	err = models.PostPizza(pizzaPost, pizzaPrice)
+	done := make(chan bool, 2)
+	defer close(done)
+
+	go utils.SaveEncodedImageParallel(pizzaReq.EncodedImage, imageName, done)
+	go models.PostPizzaParallel(pizzaPost, pizzaPrice, done)
+
+	for i := 0; i < 2; i++ {
+		success := <-done
+		if !success {
+			AnswerServerError(w)
+			log.Println("Error while saving new pizza.")
+			return
+		}
+	}
+
 	pizzaAnswer.Success = true
 	w.WriteHeader(http.StatusOK)
 	err = json.NewEncoder(w).Encode(pizzaAnswer)
@@ -286,6 +301,7 @@ func UpdatePizza(w http.ResponseWriter, r *http.Request) {
 	}
 	var pizzaAnswer PostAnswer
 	var pizzaReq PizzaRequest
+	var ImgURL string
 
 	//check if pizza is users
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
@@ -321,16 +337,14 @@ func UpdatePizza(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 
-	imgName, err := utils.SaveEncodedImage(pizzaReq.EncodedImage)
+	imageName := utils.GetUniqueName()
+	if utils.StorageName == "" {
+		ImgURL = "upload/" + imageName + ".png"
+	} else {
+		ImgURL = fmt.Sprintf(
+			"https://res.cloudinary.com/%s/image/upload/%s.png", utils.StorageName, imageName)
+	}
 
-	if err != nil {
-		AnswerServerError(w)
-		panic(err)
-	}
-	ImgURL := imgName
-	if !strings.HasPrefix(imgName, "https://") {
-		ImgURL = "upload/" + imgName
-	}
 	pizzaPost := types.PizzaPost{
 		Name:           pizzaReq.Name,
 		AuthorID:       sessions.GetCurrentUserID(r),
@@ -354,7 +368,21 @@ func UpdatePizza(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	err = models.UpdatePizza(pizzaPost, pizzaPrice, id, requesterID)
+	done := make(chan bool, 2)
+	defer close(done)
+
+	go utils.SaveEncodedImageParallel(pizzaReq.EncodedImage, imageName, done)
+	go models.UpdatePizzaParallel(pizzaPost, pizzaPrice, id, requesterID, done)
+
+	for i := 0; i < 2; i++ {
+		success := <-done
+		if !success {
+			AnswerServerError(w)
+			log.Println("Error while updating pizza.")
+			return
+		}
+	}
+
 	pizzaAnswer.Success = true
 	w.WriteHeader(http.StatusOK)
 	err = json.NewEncoder(w).Encode(pizzaAnswer)

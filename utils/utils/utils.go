@@ -32,6 +32,9 @@ type keys struct {
 	NameDB      string `json:"name_db"`
 }
 
+//StorageName of Cloudinary Cloud
+var StorageName string
+
 // CloudinaryURL is a url of image remote storage for Heroku
 var CloudinaryURL string
 
@@ -48,6 +51,7 @@ func init() {
 		rgxp := regexp.MustCompile(`^[a-z]+(?::\/\/)(?P<Public>\d*):(?P<Secret>\w*)@(?P<Name>\w*$)`)
 		slices := rgxp.FindAllStringSubmatch(CloudinaryURL, -1)
 		cloudinary = cldry.Create(slices[0][1], slices[0][2], slices[0][3])
+		StorageName = slices[0][3]
 	}
 
 	json.Unmarshal(file, &Keys)
@@ -107,6 +111,54 @@ func SaveEncodedImage(imageCode string) (string, error) {
 	return fullFileName, err
 }
 
+// SaveEncodedImageParallel saves base64 encoded image to file or Cloudinary
+func SaveEncodedImageParallel(imageCode string, token string, done chan bool) {
+
+	var fullFileName string
+
+	// If host is Heroku use Cloudinary
+	if CloudinaryURL != "" {
+		option := cldry.Option{
+			"public_id": token,
+		}
+
+		uploaded, err := cloudinary.Upload(imageCode, option)
+		log.Printf("%v\n", uploaded)
+		if err != nil {
+			log.Println(err)
+			done <- false
+			return
+		}
+		done <- true
+		return
+	}
+
+	pattern := regexp.MustCompile("^data:image/(png|jpeg);base64,")
+
+	imgBase64 := pattern.ReplaceAllString(imageCode, "")
+
+	imageReader := base64.NewDecoder(base64.StdEncoding, strings.NewReader(imgBase64))
+	pngImage, _, err := image.Decode(imageReader)
+	fullFileName = token + ".png"
+	log.Println("Open file " + "./upload/" + fullFileName)
+	imgFile, err := os.OpenFile("./upload/"+fullFileName, os.O_WRONLY|os.O_CREATE, 0666)
+
+	if err != nil {
+		log.Println("Open file file error")
+		log.Println(err)
+		done <- false
+	}
+
+	err = png.Encode(imgFile, pngImage)
+
+	if err != nil {
+		log.Println(err)
+		done <- false
+	}
+	defer imgFile.Close()
+	done <- true
+}
+
 //RemoveUnusedImg deletes useless file from drive
 func RemoveUnusedImg(imageURL string) error {
 	var err error
@@ -121,4 +173,13 @@ func EncryptPassword(password string) string {
 	h := sha1.New()
 	io.WriteString(h, password)
 	return fmt.Sprintf("%x", h.Sum(nil))
+}
+
+//GetUniqueName returns unique image name
+func GetUniqueName() string {
+	randomFileName := md5.New()
+	io.WriteString(randomFileName, strconv.FormatInt(time.Now().Unix(), 10))
+	io.WriteString(randomFileName, "pizza")
+	token := fmt.Sprintf("%x", randomFileName.Sum(nil))
+	return token
 }
